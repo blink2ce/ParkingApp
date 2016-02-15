@@ -16,11 +16,11 @@ def signup():
 	if request.method == 'POST':
 		if valid_signup(request.form['firstName'],
 					   request.form['lastName'],
-                       request.form['email'],
+					   request.form['email'],
 					   request.form['password']):
 				return sign_the_user_up(request.form['firstName'],
 							   request.form['lastName'],
-		                       request.form['email'],
+							   request.form['email'],
 							   request.form['password'],
 							   request.form['numSpots'])
 		else:
@@ -44,11 +44,11 @@ class User(db.Model):
 	password = db.Column(db.String(120), unique=False)
 	numSpots = db.Column(db.Integer, unique=False)
 def __init__(self, username, email):
-    self.username = username
-    self.email = email
+	self.username = username
+	self.email = email
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+	def __repr__(self):
+		return '<User %r>' % self.username
 
 if __name__ == '__main__':
-    app.run(debug=True)
+	app.run(debug=True)
