@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hot Parking! - Sign Up</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
+
+  </head>
+  <body>
+    <p>First name: <strong data-bind="text:firstName"></strong></p>
+    <p>Last name: <strong data-bind="text:lastName"></strong></p>
+    <h1>Hot Parking</h1>
+    <p>Your one-stop spot for all of your apartment parking needs!</p>
+    <h2>Signup</h2>
+    <form class="col-md-4">
+        <fieldset class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" class="form-control" id="firstName" placeholder="First Name">
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="exampleInputEmail1">Email address</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+          <small class="text-muted">We'll never share your email with anyone else.</small>
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="exampleInputPassword1">Password</label>
+          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="exampleSelect1">How many spots do you need?</label>
+          <select class="form-control" id="exampleSelect1">
+            <option>1</option>
+            <option>2</option>
+          </select>
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <br>
+        <small class="text-muted">Check your email for a confirmation message!</small>
+    </form>
+
+  </body>
+    <script type='text/javascript' src='static/js/viewModel.js'></script>
+</html>
