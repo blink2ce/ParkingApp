@@ -2,11 +2,10 @@ from flask import Flask, send_file, session
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask import request
+import os.path
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
-#db.create_all();
 
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -23,6 +22,9 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r>' % self.firstName
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/test.db'
+db.create_all();
+
 @app.route('/')
 def index():
 	return send_file('templates/index.html')
@@ -30,7 +32,7 @@ def index():
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
 	if request.method == 'POST':
-			newUser = User(firstName, lastName, email, passowrd);
+			newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password']);
 			db.session.add(newUser);
 			db.session.commit();
 	else:
