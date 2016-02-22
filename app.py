@@ -34,13 +34,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/test.db'
 db.create_all();
 
 @app.route('/', methods=['GET', 'POST'])
-#def index():
-def hello():
-    return render_template('showUser.html')
+#def hello():
+#    return render_template('showUser.html')
+
+def index():
 
 	#if request.method=='POST':
 	#	user = User.query.filter_by(email=request.form['email']).first_or_404()
-#	return render_template("showUser.html")
+	return render_template("index.html")
 		#render_template("showUser.html", text=user)
 		#return send_file('templates/index.html')
 
@@ -49,7 +50,8 @@ def hello():
 
 @app.route("/echo", methods=['POST'])
 def echo():
-    return render_template('showUser.html', text=request.form['text'])
+	user = User.query.filter_by(email=request.form['email']).first_or_404()
+	return render_template('showUser.html', text=request.form['email'])
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
