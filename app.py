@@ -51,7 +51,7 @@ def index():
 @app.route("/echo", methods=['POST'])
 def echo():
 	user = User.query.filter_by(email=request.form['email']).first_or_404()
-	return render_template('showUser.html', text=request.form['email'])
+	return render_template('showUser.html', text=user)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
