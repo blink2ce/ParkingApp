@@ -21,11 +21,13 @@ class User(db.Model):
 	lastName = db.Column(db.String(80), unique=False)
 	email = db.Column(db.String(120), unique=False)
 	password = db.Column(db.String(120), unique=False)
-	def __init__(self, firstName, lastName, email, password):
+	spot = db.Column(db.Integer, unique=False)
+	def __init__(self, firstName, lastName, email, password, spot):
 		self.firstName = firstName
 		self.lastName = lastName
 		self.email = email
 		self.password = password
+		self.spot = spot
 
 	def __repr__(self):
 		return '<User %r>' % self.firstName
@@ -42,15 +44,18 @@ def echo():
 	user = User.query.filter_by(email=request.form['email']).first_or_404()
 	password = user.password
 	enteredPassword = request.form['password']
+	firstName = user.firstName
+	lastName = user.lastName
+	email = user.email
 	if password != enteredPassword:
 		return 'ERROR - Password entered does not match password on file. Go back and try again'
 	else:
-		return render_template('useraccount.html', text=user)
+		return render_template('useraccount.html', text=user, firstName=firstName, lastName=lastName, email=email, password=password)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
 	if request.method == 'POST':
-			newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'])
+			newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'], 0)
 			db.session.add(newUser)
 			db.session.commit()
 			User.query.all()
