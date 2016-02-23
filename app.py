@@ -14,7 +14,7 @@ from flask.json import jsonify
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
-
+user = None
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	firstName = db.Column(db.String(80), unique=False)
@@ -47,10 +47,11 @@ def echo():
 	firstName = user.firstName
 	lastName = user.lastName
 	email = user.email
+	spot = user.spot
 	if password != enteredPassword:
 		return 'ERROR - Password entered does not match password on file. Go back and try again'
 	else:
-		return render_template('useraccount.html', text=user, firstName=firstName, lastName=lastName, email=email, password=password)
+		return render_template('useraccount.html', text=user, firstName=firstName, lastName=lastName, email=email, password=password, spot=spot)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -61,10 +62,11 @@ def signup():
 			User.query.all()
 	return send_file('static/partials/signup.html')
 
-#def sign_the_user_up(firstName, lastName, email, password):
-#	newUser = User(firstName, lastName, email, passowrd);
-#	db.session.add(newUser);
-#	db.session.commit();
+@app.route('/choosespot', methods=['POST', 'GET'])
+def choosespot():
+	spot = user.spot
+	return render_template('static/partials/choosespot.html', spot=user.spot)
+
 
 if __name__ == '__main__':
 	app.run(debug=True)
