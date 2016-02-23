@@ -34,29 +34,18 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/test.db'
 db.create_all();
 
 @app.route('/', methods=['GET', 'POST'])
-#def hello():
-#    return render_template('showUser.html')
-
 def index():
-
-	#if request.method=='POST':
-	#	user = User.query.filter_by(email=request.form['email']).first_or_404()
 	return render_template("index.html")
-		#render_template("showUser.html", text=user)
-		#return send_file('templates/index.html')
 
-		#How to show user info?
-		#return render_template("show_user.html", user=user)
-
-@app.route("/echo", methods=['POST'])
+@app.route("/useraccount", methods=['POST'])
 def echo():
 	user = User.query.filter_by(email=request.form['email']).first_or_404()
 	password = user.password
 	enteredPassword = request.form['password']
 	if password != enteredPassword:
-		return 'ERROR'
+		return 'ERROR - Password entered does not match password on file. Go back and try again'
 	else:
-		return render_template('showUser.html', text=user)
+		return render_template('useraccount.html', text=user)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -65,9 +54,6 @@ def signup():
 			db.session.add(newUser)
 			db.session.commit()
 			User.query.all()
-			print('Hello World!', file=sys.stderr)
-	else:
-			error = "Error on form"
 	return send_file('static/partials/signup.html')
 
 #def sign_the_user_up(firstName, lastName, email, password):
