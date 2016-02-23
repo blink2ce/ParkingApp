@@ -8,13 +8,8 @@ import os.path
 import logging
 from flask.json import jsonify
 
-
-#logging.basicConfig()
-#logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-
 app = Flask(__name__)
 db = SQLAlchemy(app)
-user = None
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	firstName = db.Column(db.String(80), unique=False)
@@ -64,8 +59,7 @@ def signup():
 
 @app.route('/choosespot', methods=['POST', 'GET'])
 def choosespot():
-	spot = user.spot
-	return render_template('static/partials/choosespot.html', spot=user.spot)
+	return send_file('static/partials/choosespot.html')
 
 
 if __name__ == '__main__':
