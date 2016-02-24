@@ -1,15 +1,15 @@
 from __future__ import print_function
 import sys
-from flask import Flask, send_file, session
+from flask import Flask, send_file
 from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask import request
-import os.path
-import logging
 from flask.json import jsonify
+from flask import session, redirect, url_for, escape, request
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	firstName = db.Column(db.String(80), unique=False)
@@ -23,6 +23,8 @@ class User(db.Model):
 		self.email = email
 		self.password = password
 		self.spot = spot
+		def get_id():
+			pass
 
 	def __repr__(self):
 		return '<User %r>' % self.firstName
@@ -32,6 +34,8 @@ db.create_all();
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+	if 'email' in session:
+		return 'Logged in as  %s' % escape(session['email'])
 	return render_template("index.html")
 
 @app.route("/useraccount", methods=['POST'])
@@ -52,6 +56,8 @@ def echo():
 def signup():
 	if request.method == 'POST':
 			newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'], 0)
+			session['email'] = request.form['email']
+			return 'Session is  %s' % escape(session['email'])
 			db.session.add(newUser)
 			db.session.commit()
 			User.query.all()
@@ -61,6 +67,10 @@ def signup():
 def choosespot():
 	return send_file('static/partials/choosespot.html')
 
+@app.route('/logout')
+def logout():
+	session.pop('email', None)
+	return 'Logged out'
 
 if __name__ == '__main__':
 	app.run(debug=True)
