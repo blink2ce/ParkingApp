@@ -35,9 +35,10 @@ db.create_all();
 @app.route('/', methods=['GET', 'POST'])
 def index():
 	if 'email' in session:
-		return 'Logged in as  %s' % escape(session['email'])
+		thetext = 'Logged in as  %s' % escape(session['email'])
 	else:
-		return render_template("index.html")
+		thetext = ''
+	return render_template("index.html", thetext=thetext)
 
 @app.route("/useraccount", methods=['POST'])
 def echo():
@@ -49,10 +50,14 @@ def echo():
 	lastName = user.lastName
 	email = user.email
 	spot = user.spot
+	if 'email' in session:
+		thetext =  'Logged in as  %s' % escape(session['email'])
+	else:
+		thetext = ''
 	if password != enteredPassword:
 		return 'ERROR - Password entered does not match password on file. Go back and try again'
 	else:
-		return render_template('useraccount.html', text=user, firstName=firstName, lastName=lastName, email=email, password=password, spot=spot)
+		return render_template('useraccount.html', text=user, firstName=firstName, lastName=lastName, email=email, password=password, spot=spot, thetext=thetext)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -66,12 +71,18 @@ def signup():
 
 	if request.method == 'GET':
 		if 'email' in session:
-			return 'Logged in as  %s' % escape(session['email'])
-		return send_file('static/partials/signup.html')
+			thetext =  'Logged in as  %s' % escape(session['email'])
+		else:
+			thetext = ''
+		return render_template('signup.html', thetext=thetext)
 
 @app.route('/choosespot', methods=['POST', 'GET'])
 def choosespot():
-	return send_file('static/partials/choosespot.html')
+	if 'email' in session:
+		thetext =  'Logged in as  %s' % escape(session['email'])
+	else:
+		thetext = ''
+	return render_template('choosespot.html', thetext=thetext)
 
 @app.route('/logout')
 def logout():
