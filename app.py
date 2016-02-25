@@ -64,7 +64,7 @@ def signup():
 	if request.method == 'POST':
 		newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'], 0)
 		session['email'] = request.form['email']
-		return 'Session is  %s' % escape(session['email'])
+		#return 'Session is  %s' % escape(session['email'])
 		db.session.add(newUser)
 		db.session.commit()
 		User.query.all()
@@ -80,9 +80,10 @@ def signup():
 def choosespot():
 	if 'email' in session:
 		thetext =  'Logged in as  %s' % escape(session['email'])
+		currentSpot = session['password']
 	else:
 		thetext = ''
-	return render_template('choosespot.html', thetext=thetext)
+	return render_template('choosespot.html', thetext=thetext, currentSpot=currentSpot)
 
 @app.route('/logout')
 def logout():
