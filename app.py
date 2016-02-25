@@ -36,11 +36,13 @@ db.create_all();
 def index():
 	if 'email' in session:
 		return 'Logged in as  %s' % escape(session['email'])
-	return render_template("index.html")
+	else:
+		return render_template("index.html")
 
 @app.route("/useraccount", methods=['POST'])
 def echo():
 	user = User.query.filter_by(email=request.form['email']).first_or_404()
+	session['email'] = request.form['email']
 	password = user.password
 	enteredPassword = request.form['password']
 	firstName = user.firstName
@@ -55,13 +57,17 @@ def echo():
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
 	if request.method == 'POST':
-			newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'], 0)
-			session['email'] = request.form['email']
-			return 'Session is  %s' % escape(session['email'])
-			db.session.add(newUser)
-			db.session.commit()
-			User.query.all()
-	return send_file('static/partials/signup.html')
+		newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'], 0)
+		session['email'] = request.form['email']
+		return 'Session is  %s' % escape(session['email'])
+		db.session.add(newUser)
+		db.session.commit()
+		User.query.all()
+
+	if request.method == 'GET':
+		if 'email' in session:
+			return 'Logged in as  %s' % escape(session['email'])
+		return send_file('static/partials/signup.html')
 
 @app.route('/choosespot', methods=['POST', 'GET'])
 def choosespot():
