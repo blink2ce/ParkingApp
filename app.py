@@ -82,17 +82,23 @@ def choosespot():
 		if 'email' in session:
 			thetext =  'Logged in as  %s' % escape(session['email'])
 			user = User.query.filter_by(email=session['email']).first()
-			usersSpot = user.spot
-			#thespot = 'Spot is %s' % escape(session['spot'])
+			#find all spots that are assigned
+			assignedSpots = set()
+			for user in User.query.all():
+				assignedSpots.add(user.spot)
+			#All spots in the garage
+			garage = set()
+			count = 0
+			while count < 300:
+				garage.add(count)
+				count = count + 1
+			#Difference betweengarage and assigned spots is the set of availableSpots
+			availableSpots = garage - assignedSpots
  		else:
 			thetext = ''
-		return render_template('choosespot.html', thetext=thetext, currentSpot = usersSpot)
-#	if 'email' in session:
-#		thetext =  'Logged in as  %s' % escape(session['email'])
-#		#currentSpot = session['password']
-#	else:
-#		thetext = ''
-#	return render_template('choosespot.html', thetext=thetext, currentSpot=currentSpot)
+		return render_template('choosespot.html', thetext=thetext, currentSpot = user.spot, availableSpots = availableSpots)
+
+
 @app.route('/logout')
 def logout():
 	session.pop('email', None)
