@@ -89,7 +89,7 @@ def choosespot():
 			#All spots in the garage
 			garage = set()
 			count = 0
-			while count < 300:
+			while count <= 300:
 				garage.add(count)
 				count = count + 1
 			#Difference betweengarage and assigned spots is the set of availableSpots
