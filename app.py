@@ -78,13 +78,21 @@ def signup():
 
 @app.route('/choosespot', methods=['POST', 'GET'])
 def choosespot():
-	if 'email' in session:
-		thetext =  'Logged in as  %s' % escape(session['email'])
-		currentSpot = session['password']
-	else:
-		thetext = ''
-	return render_template('choosespot.html', thetext=thetext, currentSpot=currentSpot)
-
+	if request.method == 'GET':
+		if 'email' in session:
+			thetext =  'Logged in as  %s' % escape(session['email'])
+			user = User.query.filter_by(email=session['email']).first()
+			usersSpot = user.spot
+			#thespot = 'Spot is %s' % escape(session['spot'])
+ 		else:
+			thetext = ''
+		return render_template('choosespot.html', thetext=thetext, currentSpot = usersSpot)
+#	if 'email' in session:
+#		thetext =  'Logged in as  %s' % escape(session['email'])
+#		#currentSpot = session['password']
+#	else:
+#		thetext = ''
+#	return render_template('choosespot.html', thetext=thetext, currentSpot=currentSpot)
 @app.route('/logout')
 def logout():
 	session.pop('email', None)
