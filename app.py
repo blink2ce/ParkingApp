@@ -86,7 +86,6 @@ def choosespot():
 			assignedSpots = set()
 			for user in User.query.all():
 				assignedSpots.add(user.spot)
-			#All spots in the garage
 			garage = set()
 			count = 0
 			while count <= 300:

@@ -11,10 +11,20 @@
     <p>{{thetext}}</p>
     <h3>Current Spot</h3> <p class="info">{{currentSpot}}</p>
     <h3>Available Spots: </h3>
-    <p>{{availableSpots}}</p>
-    {% for spot in availableSpots %}
-    {{availableSpots}}
-    {% endfor %}
+    <p>Choose a new spot.</p>
+
+    <form class="col-md-4" action="/confirmSpotChoice" method="POST">
+      <fieldset class="form-group">
+        <tr>
+          {% for item in availableSpots %}
+                <!--<td><a href="confirmSpotChoice">{{ item }}</a></td>-->
+                <td><input type="button" class="btn" value={{item}}></button></td>
+          {% endfor %}
+        </tr>
+      </fieldset>
+      <button type="submit" class="btn btn-primary" value="spotChoiceSubmit">Submit</button>
+      <br>
+    </form>
 
   </body>
 </html>
