@@ -17,14 +17,24 @@
       <fieldset class="form-group">
         <tr>
           {% for item in availableSpots %}
-                <!--<td><a href="confirmSpotChoice">{{ item }}</a></td>-->
-                <td><input type="button" class="btn" name="spotChoice" value={{item}}>{{item}}</button></td>
+                <td><input type="submit" class="btn" name="spotChoice" value={{item}} /></td>
           {% endfor %}
         </tr>
       </fieldset>
-      <button type="submit" class="btn btn-primary" value="spotChoiceSubmit">Submit</button>
-      <br>
     </form>
+
+  <!--  <div class="row">
+      <div class="col-lg-6">
+        {% for item in availableSpots %}
+        <div class="input-group">
+          <span class="input-group-addon">
+            <input type="radio" aria-label="Radio button for following text input">
+          </span>
+          {{item}}
+        </div>
+        {% endfor %}
+      </div>
+    </div>-->
 
   </body>
 </html>

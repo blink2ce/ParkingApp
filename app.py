@@ -79,6 +79,7 @@ def confirmChoice():
 	#		thetext = ''
 	#	return render_template('confirmSpotChoice.html', thetext=thetext, urrentSpot = user.spot)
 	choice = request.form['spotChoice']
+	#Change value in database
 	return 'hi'
 
 
