@@ -32,55 +32,60 @@ class User(db.Model):
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/test.db'
 db.create_all();
 
+def showUsername():
+	if 'email' in session:
+		return  'Logged in as  %s' % escape(session['email'])
+	else:
+		return ''
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-	if 'email' in session:
-		thetext = 'Logged in as  %s' % escape(session['email'])
-	else:
-		thetext = ''
-	return render_template("index.html", thetext=thetext)
+	return render_template("index.html", thetext=showUsername())
 
 @app.route("/useraccount", methods=['POST'])
-def echo():
-	user = User.query.filter_by(email=request.form['email']).first_or_404()
-	session['email'] = request.form['email']
-	password = user.password
-	enteredPassword = request.form['password']
-	firstName = user.firstName
-	lastName = user.lastName
-	email = user.email
-	spot = user.spot
-	if 'email' in session:
-		thetext =  'Logged in as  %s' % escape(session['email'])
-	else:
-		thetext = ''
-	if password != enteredPassword:
-		return 'ERROR - Password entered does not match password on file. Go back and try again'
-	else:
-		return render_template('useraccount.html', text=user, firstName=firstName, lastName=lastName, email=email, password=password, spot=spot, thetext=thetext)
+def account():
+	if request.method == "POST":
+		session['email'] = request.form['email']
+		user = User.query.filter_by(email=request.form['email']).first_or_404()
+		password = user.password
+		enteredPassword = request.form['password']
+		if password != enteredPassword:
+			return 'ERROR - Password entered does not match password on file. Go back and try again'
+		else:
+			return render_template('useraccount.html', text=user, firstName=user.firstName, lastName=user.lastName, email=user.email, password=password, spot=user.spot, thetext=showUsername())
+	#if request.method == 'GET':
+		#Need to verify that the user is logged in by checking for email in session.
+		#If user is logged in, show him/her his/her account info.
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
 	if request.method == 'POST':
 		newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'], 0)
 		session['email'] = request.form['email']
-		#return 'Session is  %s' % escape(session['email'])
 		db.session.add(newUser)
 		db.session.commit()
-		User.query.all()
+		return send_file('templates/signupConfirmed.html')
 
 	if request.method == 'GET':
-		if 'email' in session:
-			thetext =  'Logged in as  %s' % escape(session['email'])
-		else:
-			thetext = ''
-		return render_template('signup.html', thetext=thetext)
+		return render_template('signup.html', thetext=showUsername())
+
+
+@app.route('/confirmSpotChoice', methods=['POST'])
+def confirmChoice():
+	#if request.method == 'GET':
+	#	if 'email' in session:
+	#		thetext =  'Logged in as  %s' % escape(session['email'])
+ 	#	else:
+	#		thetext = ''
+	#	return render_template('confirmSpotChoice.html', thetext=thetext, urrentSpot = user.spot)
+	choice = request.form['spotChoice']
+	return 'hi'
+
 
 @app.route('/choosespot', methods=['POST', 'GET'])
 def choosespot():
 	if request.method == 'GET':
 		if 'email' in session:
-			thetext =  'Logged in as  %s' % escape(session['email'])
 			user = User.query.filter_by(email=session['email']).first()
 			#find all spots that are assigned
 			assignedSpots = set()
@@ -91,11 +96,10 @@ def choosespot():
 			while count <= 300:
 				garage.add(count)
 				count = count + 1
-			#Difference betweengarage and assigned spots is the set of availableSpots
+			#Difference between garage and assigned spots is the set of availableSpots
 			availableSpots = garage - assignedSpots
- 		else:
-			thetext = ''
-		return render_template('choosespot.html', thetext=thetext, currentSpot = user.spot, availableSpots = availableSpots)
+		return render_template('choosespot.html', thetext=showUsername(), currentSpot = user.spot, availableSpots = availableSpots)
+
 
 
 @app.route('/logout')
