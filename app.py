@@ -72,15 +72,13 @@ def signup():
 
 @app.route('/confirmSpotChoice', methods=['POST'])
 def confirmChoice():
-	#if request.method == 'GET':
-	#	if 'email' in session:
-	#		thetext =  'Logged in as  %s' % escape(session['email'])
- 	#	else:
-	#		thetext = ''
-	#	return render_template('confirmSpotChoice.html', thetext=thetext, urrentSpot = user.spot)
 	choice = request.form['spotChoice']
+	if 'email' in session:
+			user = User.query.filter_by(email=session['email']).first()
+			currentSpot = user.spot
 	#Change value in database
-	return 'hi'
+
+	return render_template('confirmSpotChoice.html', choice=choice, thetext=showUsername(), currentSpot=currentSpot)
 
 
 @app.route('/choosespot', methods=['POST', 'GET'])
