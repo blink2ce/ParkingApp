@@ -42,7 +42,7 @@ def showUsername():
 def index():
 	return render_template("index.html", thetext=showUsername())
 
-@app.route("/useraccount", methods=['POST'])
+@app.route("/useraccount", methods=['POST', 'GET'])
 def account():
 	if request.method == "POST":
 		session['email'] = request.form['email']
@@ -53,9 +53,15 @@ def account():
 			return 'ERROR - Password entered does not match password on file. Go back and try again'
 		else:
 			return render_template('useraccount.html', text=user, firstName=user.firstName, lastName=user.lastName, email=user.email, password=password, spot=user.spot, thetext=showUsername())
-	#if request.method == 'GET':
+	if request.method == 'GET':
 		#Need to verify that the user is logged in by checking for email in session.
 		#If user is logged in, show him/her his/her account info.
+		if 'email' in session:
+			user = User.query.filter_by(email=session['email']).first_or_404()
+			return render_template('useraccount.html', text=user, firstName=user.firstName, lastName=user.lastName, email=user.email, password=user.password, spot=user.spot, thetext=showUsername())
+		else:
+			return 'Error - Not logged in'
+
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -74,18 +80,21 @@ def signup():
 def confirmChoice():
 	choice = request.form['spotChoice']
 	if 'email' in session:
-			user = User.query.filter_by(email=session['email']).first()
-			currentSpot = user.spot
-	#Change value in database
-
-	return render_template('confirmSpotChoice.html', choice=choice, thetext=showUsername(), currentSpot=currentSpot)
+		user = User.query.filter_by(email=session['email']).first()
+		currentSpot = user.spot
+		return render_template('confirmSpotChoice.html', choice=choice, thetext=showUsername(), currentSpot=currentSpot)
+	else:
+		return 'Error - Not logged in'
 
 @app.route('/confirmChangedSpot', methods=['POST'])
 def confirmChange():
-	newSpot = request.form['newSpot']
-	#Change database now.
-	
-	return newSpot
+	if 'email' in session:
+		user = User.query.filter_by(email=session['email']).first()
+		newSpot = request.form['newSpot']
+		user.spot = newSpot
+		db.session.commit()
+		return render_template('confirmChangedSpot.html')
+	return 'Not logged in - Please log in and try again.'
 
 @app.route('/choosespot', methods=['POST', 'GET'])
 def choosespot():
