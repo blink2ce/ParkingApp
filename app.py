@@ -114,12 +114,17 @@ def choosespot():
 			availableSpots = garage - assignedSpots
 		return render_template('choosespot.html', thetext=showUsername(), currentSpot = user.spot, availableSpots = availableSpots)
 
-
+@app.route('/switchSpots', methods=['POST', 'GET'])
+def switchSpots():
+	if request.method == 'GET':
+		return render_template('switchSpots.html')
+	else:
+		return 'error'
 
 @app.route('/logout')
 def logout():
 	session.pop('email', None)
-	return 'Logged out'
+	return render_template('logout.html')
 
 if __name__ == '__main__':
 	app.run(debug=True)
