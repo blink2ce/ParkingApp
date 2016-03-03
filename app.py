@@ -80,6 +80,12 @@ def confirmChoice():
 
 	return render_template('confirmSpotChoice.html', choice=choice, thetext=showUsername(), currentSpot=currentSpot)
 
+@app.route('/confirmChangedSpot', methods=['POST'])
+def confirmChange():
+	newSpot = request.form['newSpot']
+	#Change database now.
+	
+	return newSpot
 
 @app.route('/choosespot', methods=['POST', 'GET'])
 def choosespot():
