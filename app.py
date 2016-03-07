@@ -5,8 +5,23 @@ from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask.json import jsonify
 from flask import session, redirect, url_for, escape, request
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+#from flask_mail import Mail, Message
 
 app = Flask(__name__)
+
+#app.config.update(dict(
+#    DEBUG = True,
+#    MAIL_SERVER = 'smtp.gmail.com',
+#    MAIL_PORT = 587, #465
+#    MAIL_USE_TLS = True,
+#    MAIL_USERNAME = 'hotparkingready@gmail.com',
+#    MAIL_PASSWORD = 'readytorumble',
+#))
+
+#mail = Mail(app)
 db = SQLAlchemy(app)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
@@ -120,6 +135,34 @@ def switchSpots():
 		return render_template('switchSpots.html')
 	else:
 		return 'error'
+
+@app.route('/confirmSwitchEmailSent', methods=['POST'])
+def confirmSwitchEmailSent():
+	fromaddr = "hotparkingready@gmail.com"
+	toaddr = request.form['friendsEmail']
+	msg = MIMEMultipart()
+	msg['From'] = fromaddr
+	msg['To'] = toaddr
+	msg["Subject"] = "Will you switch your parking spot with me?"
+	body = "Hi!" + session['email'] + ' wants to switch his/her parking spot with you. Click the link to confirm or do nothing to deny.'
+	msg.attach(MIMEText(body, 'plain'))
+	server = smtplib.SMTP('smtp.gmail.com', 587)
+	server.starttls()
+	server.login(fromaddr, 'readytorumble')
+	text = msg.as_string()
+	server.sendmail(fromaddr, toaddr, text)
+	server.quit()
+	#send email to friend
+	#msg = Message("Hello", sender="hotparkingready@gmail.com", recipients=["friendsEmail"])
+	#mail.send(msg)
+	#msg = Message(
+    #          'Hello',
+	#       sender='hotparkingready@dgoogle.com',
+	#       recipients=
+    #           ['friendsEmail'])
+	#msg.body = "This is the email body"
+	#mail.send(msg)
+	return "Sent"
 
 @app.route('/logout')
 def logout():
