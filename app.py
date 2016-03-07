@@ -144,7 +144,8 @@ def confirmSwitchEmailSent():
 	msg['From'] = fromaddr
 	msg['To'] = toaddr
 	msg["Subject"] = "Will you switch your parking spot with me?"
-	body = "Hi!" + session['email'] + ' wants to switch his/her parking spot with you. Click the link to confirm or do nothing to deny.'
+	code = 'xyz'
+	body = "Hi! " + session['email'] + ' wants to switch his/her parking spot with you. Click the link to confirm or do nothing to deny. http://127.0.0.1:5000/confirmMutualSpotSwitch User Code: ' + code
 	msg.attach(MIMEText(body, 'plain'))
 	server = smtplib.SMTP('smtp.gmail.com', 587)
 	server.starttls()
@@ -164,6 +165,17 @@ def confirmSwitchEmailSent():
 	#mail.send(msg)
 	return "Sent"
 
+@app.route('/confirmMutualSpotSwitch', methods=['GET'])
+def confirmMutualSpotSwitch():
+	return render_template('confirmMutualSpotSwitch.html')
+
+@app.route('/MutualSpotSwitchConfirmed', methods=['POST'])
+def MutualSpotSwitchConfirmed():
+	userCode = request.form['userCode']
+	if userCode == 'xyz':
+		return 'hmm ok'
+	else:
+		return 'error switching spots'
 @app.route('/logout')
 def logout():
 	session.pop('email', None)
