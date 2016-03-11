@@ -32,12 +32,14 @@ class User(db.Model):
 	email = db.Column(db.String(120), unique=False)
 	password = db.Column(db.String(120), unique=False)
 	spot = db.Column(db.Integer, unique=False)
-	def __init__(self, firstName, lastName, email, password, spot):
+	wantsToSwitchWithUser = db.Column(db.Integer, unique=False)
+	def __init__(self, firstName, lastName, email, password, spot, wantsToSwitchWithUser):
 		self.firstName = firstName
 		self.lastName = lastName
 		self.email = email
 		self.password = password
 		self.spot = spot
+		self.wantsToSwitchWithUser = wantsToSwitchWithUser
 		def get_id():
 			pass
 
@@ -127,7 +129,7 @@ def choosespot():
 				count = count + 1
 			#Difference between garage and assigned spots is the set of availableSpots
 			availableSpots = garage - assignedSpots
-		return render_template('choosespot.html', thetext=showUsername(), currentSpot = user.spot, availableSpots = availableSpots)
+		return render_template('choosespot.html', thetext=showUsername(), currentSpot=user.spot, availableSpots=availableSpots)
 
 @app.route('/switchSpots', methods=['POST', 'GET'])
 def switchSpots():
@@ -145,7 +147,7 @@ def confirmSwitchEmailSent():
 	msg['To'] = toaddr
 	msg["Subject"] = "Will you switch your parking spot with me?"
 	code = 'xyz'
-	body = "Hi! " + session['email'] + ' wants to switch his/her parking spot with you. Click the link to confirm or do nothing to deny. http://127.0.0.1:5000/confirmMutualSpotSwitch User Code: ' + code
+	body = "Hi! " + session['email'] + ' wants to switch his/her parking spot with you. Click the link to view your account! http://127.0.0.1:5000/confirmMutualSpotSwitch User Code: ' + code
 	msg.attach(MIMEText(body, 'plain'))
 	server = smtplib.SMTP('smtp.gmail.com', 587)
 	server.starttls()
@@ -173,9 +175,20 @@ def confirmMutualSpotSwitch():
 def MutualSpotSwitchConfirmed():
 	userCode = request.form['userCode']
 	if userCode == 'xyz':
-		return 'hmm ok'
+		return send_file('templates/index.html')
 	else:
 		return 'error switching spots'
+
+@app.route('/switchOptions', methods=['GET'])
+def switchOptions():
+	#Get emails of all users who want to switch with this user
+	user = User.query.filter_by(email=session['email']).first()
+	listOfSuitors = User.query.filter(User.wantsToSwitchWithUser==user.id).all()
+	listOfSuitorsEmails = []
+	for u in listOfSuitors:
+		listOfSuitorsEmails.append(u.email)
+	return render_template('switchOptions.html', listOfSuitors=listOfSuitorsEmails, thetext=showUsername())
+
 @app.route('/logout')
 def logout():
 	session.pop('email', None)
