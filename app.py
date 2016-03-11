@@ -189,6 +189,16 @@ def switchOptions():
 		listOfSuitorsEmails.append(u.email)
 	return render_template('switchOptions.html', listOfSuitors=listOfSuitorsEmails, thetext=showUsername())
 
+@app.route('/confirmSpotAgreement', methods=['POST'])
+def confirmSpotAgreement():
+	#Give page the choice of spot
+	usersEmail = request.form['usersEmail']
+	user = User.query.filter_by(email=usersEmail).first()
+	spotToTake = user.spot
+	currentUser= User.query.filter_by(email=session['email']).first()
+	currentSpot = currentUser.spot
+	return render_template('confirmSpotAgreement.html', choice=spotToTake, currentSpot=currentSpot, thetext=showUsername())
+
 @app.route('/logout')
 def logout():
 	session.pop('email', None)
