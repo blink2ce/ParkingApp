@@ -122,7 +122,23 @@ def confirmSwitch():
 		sentinel = user.spot
 		user.spot = newSpot
 		newSpotsUser.spot = sentinel
+		newSpotsUser.wantsToSwitchWithUser = None
 		db.session.commit()
+		#send notification to friend that the request was accepted by buddy
+		fromaddr = "hotparkingready@gmail.com"
+		toaddr = user.email
+		msg = MIMEMultipart()
+		msg['From'] = fromaddr
+		msg['To'] = toaddr
+		msg["Subject"] = "You have switched your parking spot with " + user.email
+		body = "Hi! Your buddy " + user.email + "agrees to switch spots with you! Your spot has now been updated. To see your account please log in."
+		msg.attach(MIMEText(body, 'plain'))
+		server = smtplib.SMTP('smtp.gmail.com', 587)
+		server.starttls()
+		server.login(fromaddr, 'readytorumble')
+		text = msg.as_string()
+		server.sendmail(fromaddr, toaddr, text)
+		server.quit()
 		return render_template('confirmChangedSpot.html')
 	return 'Not logged in - Please log in and try again.'
 
@@ -160,8 +176,7 @@ def confirmSwitchEmailSent():
 	msg['From'] = fromaddr
 	msg['To'] = toaddr
 	msg["Subject"] = "Will you switch your parking spot with me?"
-	code = 'xyz'
-	body = "Hi! " + session['email'] + ' wants to switch his/her parking spot with you. Click the link to view your account! http://127.0.0.1:5000/confirmMutualSpotSwitch User Code: ' + code
+	body = "Hi! " + session['email'] + ' wants to switch his/her parking spot with you. Click here to login and view the request: http://127.0.0.1:5000/ '
 	msg.attach(MIMEText(body, 'plain'))
 	server = smtplib.SMTP('smtp.gmail.com', 587)
 	server.starttls()
@@ -169,6 +184,11 @@ def confirmSwitchEmailSent():
 	text = msg.as_string()
 	server.sendmail(fromaddr, toaddr, text)
 	server.quit()
+
+	user = User.query.filter_by(email=session['email']).first()
+	friend = User.query.filter_by(email=request.form['friendsEmail']).first()
+	user.wantsToSwitchWithUser = friend.id
+	db.session.commit()
 	#send email to friend
 	#msg = Message("Hello", sender="hotparkingready@gmail.com", recipients=["friendsEmail"])
 	#mail.send(msg)
@@ -185,13 +205,13 @@ def confirmSwitchEmailSent():
 def confirmMutualSpotSwitch():
 	return render_template('confirmMutualSpotSwitch.html')
 
-@app.route('/MutualSpotSwitchConfirmed', methods=['POST'])
-def MutualSpotSwitchConfirmed():
-	userCode = request.form['userCode']
-	if userCode == 'xyz':
-		return send_file('templates/index.html')
-	else:
-		return 'error switching spots'
+#@app.route('/MutualSpotSwitchConfirmed', methods=['POST'])
+#def MutualSpotSwitchConfirmed():
+#	userCode = request.form['userCode']
+#	if userCode == 'xyz':
+#		return send_file('templates/index.html')
+#	else:
+#		return 'error switching spots'
 
 @app.route('/switchOptions', methods=['GET'])
 def switchOptions():
