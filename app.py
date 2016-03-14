@@ -113,6 +113,20 @@ def confirmChange():
 		return render_template('confirmChangedSpot.html')
 	return 'Not logged in - Please log in and try again.'
 
+@app.route('/confirmSwitchedSpot', methods=['POST'])
+def confirmSwitch():
+	if 'email' in session:
+		user = User.query.filter_by(email=session['email']).first()
+		newSpot = request.form['newSpot']
+		newSpotsUser = User.query.filter_by(spot=newSpot).first()
+		sentinel = user.spot
+		user.spot = newSpot
+		newSpotsUser.spot = sentinel
+		db.session.commit()
+		return render_template('confirmChangedSpot.html')
+	return 'Not logged in - Please log in and try again.'
+
+
 @app.route('/choosespot', methods=['POST', 'GET'])
 def choosespot():
 	if request.method == 'GET':
