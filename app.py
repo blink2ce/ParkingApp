@@ -8,20 +8,9 @@ from flask import session, redirect, url_for, escape, request
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
-#from flask_mail import Mail, Message
 
 app = Flask(__name__)
 
-#app.config.update(dict(
-#    DEBUG = True,
-#    MAIL_SERVER = 'smtp.gmail.com',
-#    MAIL_PORT = 587, #465
-#    MAIL_USE_TLS = True,
-#    MAIL_USERNAME = 'hotparkingready@gmail.com',
-#    MAIL_PASSWORD = 'readytorumble',
-#))
-
-#mail = Mail(app)
 db = SQLAlchemy(app)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
@@ -71,8 +60,6 @@ def account():
 		else:
 			return render_template('useraccount.html', text=user, firstName=user.firstName, lastName=user.lastName, email=user.email, password=password, spot=user.spot, thetext=showUsername())
 	if request.method == 'GET':
-		#Need to verify that the user is logged in by checking for email in session.
-		#If user is logged in, show him/her his/her account info.
 		if 'email' in session:
 			user = User.query.filter_by(email=session['email']).first_or_404()
 			return render_template('useraccount.html', text=user, firstName=user.firstName, lastName=user.lastName, email=user.email, password=user.password, spot=user.spot, thetext=showUsername())
@@ -147,7 +134,7 @@ def confirmSwitch():
 def choosespot():
 	if request.method == 'GET':
 		if 'email' in session:
-			user = User.query.filter_by(email=session['email']).first()
+			theUser = User.query.filter_by(email=session['email']).first()
 			#find all spots that are assigned
 			assignedSpots = set()
 			for user in User.query.all():
@@ -159,7 +146,7 @@ def choosespot():
 				count = count + 1
 			#Difference between garage and assigned spots is the set of availableSpots
 			availableSpots = garage - assignedSpots
-		return render_template('choosespot.html', thetext=showUsername(), currentSpot=user.spot, availableSpots=availableSpots)
+		return render_template('choosespot.html', thetext=showUsername(), currentSpot=theUser.spot, availableSpots=availableSpots, assignedSpots=assignedSpots)
 
 @app.route('/switchSpots', methods=['POST', 'GET'])
 def switchSpots():
@@ -170,8 +157,11 @@ def switchSpots():
 
 @app.route('/confirmSwitchEmailSent', methods=['POST'])
 def confirmSwitchEmailSent():
+	spotChoice = request.form['spotChoice']
+	friend = User.query.filter_by(spot=spotChoice).first()
+	#send email to person who currently has the spot, asking for switch on behalf of sender
 	fromaddr = "hotparkingready@gmail.com"
-	toaddr = request.form['friendsEmail']
+	toaddr = friend.email
 	msg = MIMEMultipart()
 	msg['From'] = fromaddr
 	msg['To'] = toaddr
@@ -186,32 +176,14 @@ def confirmSwitchEmailSent():
 	server.quit()
 
 	user = User.query.filter_by(email=session['email']).first()
-	friend = User.query.filter_by(email=request.form['friendsEmail']).first()
+	#friend = User.query.filter_by(email=request.form['friendsEmail']).first()
 	user.wantsToSwitchWithUser = friend.id
 	db.session.commit()
-	#send email to friend
-	#msg = Message("Hello", sender="hotparkingready@gmail.com", recipients=["friendsEmail"])
-	#mail.send(msg)
-	#msg = Message(
-    #          'Hello',
-	#       sender='hotparkingready@dgoogle.com',
-	#       recipients=
-    #           ['friendsEmail'])
-	#msg.body = "This is the email body"
-	#mail.send(msg)
 	return "Sent"
 
 @app.route('/confirmMutualSpotSwitch', methods=['GET'])
 def confirmMutualSpotSwitch():
 	return render_template('confirmMutualSpotSwitch.html')
-
-#@app.route('/MutualSpotSwitchConfirmed', methods=['POST'])
-#def MutualSpotSwitchConfirmed():
-#	userCode = request.form['userCode']
-#	if userCode == 'xyz':
-#		return send_file('templates/index.html')
-#	else:
-#		return 'error switching spots'
 
 @app.route('/switchOptions', methods=['GET'])
 def switchOptions():

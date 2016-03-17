@@ -17,12 +17,24 @@
       <fieldset class="form-group">
         <tr>
           {% for item in availableSpots %}
-                <td><input type="submit" class="btn" name="spotChoice" value={{item}} /></td>
+                <td class="availableSpot"><input type="submit" class="btn" name="spotChoice" value={{item}} /></td>
           {% endfor %}
         </tr>
       </fieldset>
     </form>
 
+    <h3>Currently taken spots: </h3>
+    <p>Click to ask current spotholder to switch spots with you</p>
+
+    <form class="col-md-4" action="/confirmSwitchEmailSent" method="POST">
+      <fieldset class="form-group">
+        <tr>
+          {% for item in assignedSpots %}
+                <td class="assignedSpot"><input type="submit" class="btn" name="spotChoice" value={{item}} /></td>
+          {% endfor %}
+        </tr>
+      </fieldset>
+    </form>
 
   </body>
 </html>
