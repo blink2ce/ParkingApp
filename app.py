@@ -70,7 +70,7 @@ def account():
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
 	if request.method == 'POST':
-		newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'], 0)
+		newUser = User(request.form['firstName'], request.form['lastName'], request.form['email'], request.form['password'], 0, 0)
 		session['email'] = request.form['email']
 		db.session.add(newUser)
 		db.session.commit()
