@@ -1,14 +1,7 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Hot Parking! - login</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
-  </head>
-  <body>
-    <h1>Hot Parking</h1>
-    <p>Your one-stop spot for all of your apartment parking needs!</p>
-    <p>{{thetext}}</p>
+{% extends "baseTemplate.html" %}
+
+{% block content %}
     <h2>Your Account</h2>
     <h3>Current Spot</h3> <p class="info">{{spot}}</p>
     <h3>First Name</h3> <p class="info">{{firstName}}</p>
@@ -17,8 +10,6 @@
     <h3>Password</h3> <p class="info">{{password}}</p>
     <hr>
     <h3><a href="choosespot">Want to choose a new spot?</a></h3>
-    <h3><a href="switchSpots">Switch spots with a friend!</a></h3>
     <h3><a href="switchOptions">See who wants to switch spots with you!</a></h3>
     <h3><a href="logout">Logout</a></h3>
-  </body>
-</html>
+  {% endblock %}

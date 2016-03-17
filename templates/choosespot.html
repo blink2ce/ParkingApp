@@ -1,14 +1,8 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Hot Parking! - login</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
-  </head>
-  <body>
-    <h1>Hot Parking</h1>
-    <p>Your one-stop spot for all of your apartment parking needs!</p>
-    <p>{{thetext}}</p>
+{% extends "baseTemplate.html" %}
+
+{% block content %}
+
     <h3>Current Spot</h3> <p class="info">{{currentSpot}}</p>
     <h3>Available Spots: </h3>
     <p>Choose a new spot.</p>
@@ -38,3 +32,5 @@
 
   </body>
 </html>
+
+{% endblock %}
